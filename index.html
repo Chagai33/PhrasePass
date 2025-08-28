@@ -8,7 +8,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
-            flex-direction: column; /* Added to stack footer below container */
+            flex-direction: column; 
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -37,10 +37,17 @@
             margin-bottom: 1.5rem;
             line-height: 1.5;
         }
+        
+        /* --- שינוי: הוספת עטיפה לשדה הטקסט --- */
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
         input[type="text"] {
             width: 100%;
             padding: 12px;
-            margin-bottom: 1rem;
+            padding-left: 35px; /* ריווח פנימי לכפתור ה-X */
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 1rem;
@@ -48,6 +55,24 @@
             direction: ltr;
             text-align: left;
         }
+
+        /* --- שינוי: עיצוב כפתור הניקוי --- */
+        .clear-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 1.6rem;
+            font-weight: 300;
+            color: #aaa;
+            display: none; /* מוסתר כברירת מחדל */
+            line-height: 1;
+        }
+        .clear-btn:hover {
+            color: #333;
+        }
+
         button {
             width: 100%;
             padding: 12px;
@@ -119,7 +144,6 @@
             background-color: #e8f0fe;
         }
         
-        /* --- קוד חדש לעיצוב החלק התחתון --- */
         .footer {
             margin-top: 2rem;
             text-align: center;
@@ -139,7 +163,11 @@
             כדי ליצור סיסמה חזקה, כתבו משפט קצר באנגלית (למשל, <code>my dog name is bonzo</code>). המערכת תהפוך אותו אוטומטית לסיסמה מאובטחת באורך 12 תווים.
         </p>
 
-        <input type="text" id="userInput" placeholder=" כתבו משפט קצר באנגלית...">
+        <div class="input-wrapper">
+            <input type="text" id="userInput" placeholder=" כתבו משפט קצר באנגלית...">
+            <span id="clearBtn" class="clear-btn">&times;</span>
+        </div>
+
         <button id="generateBtn" onclick="generatePassword()">צור לי סיסמה!</button>
         <div id="result" onclick="copyMainResult()"></div>
         <div id="message"></div>
@@ -156,12 +184,12 @@
     </div>
 
     <script>
-        // (כל קוד ה-JavaScript נשאר זהה לקודם)
         let passwordHistory = [];
         const BLOCKLIST = ['password', '123456', 'qwerty', 'iloveyou', 'mynameis', 'sunshine', 'israel', 'football'];
         const PADDING_CHARS = 'abcdefghkmnpqrstuvwxyz23456789';
         const userInputEl = document.getElementById('userInput');
         const messageDiv = document.getElementById('message');
+        const clearBtn = document.getElementById('clearBtn'); // <-- שינוי: הוספת הפניה לכפתור ה-X
 
         userInputEl.addEventListener('keyup', function(event) {
             if (event.key === 'Enter') {
@@ -303,6 +331,26 @@
                 historyList.appendChild(listItem);
             });
         }
+
+        /* --- שינוי: הוספת לוגיקה לכפתור הניקוי --- */
+        userInputEl.addEventListener('input', function() {
+            if (userInputEl.value.length > 0) {
+                clearBtn.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+        });
+
+        clearBtn.addEventListener('click', function() {
+            userInputEl.value = '';
+            document.getElementById('result').textContent = '';
+            document.getElementById('historyList').innerHTML = '';
+            passwordHistory = [];
+            showMessage('', 'black');
+            clearBtn.style.display = 'none';
+            userInputEl.focus(); 
+        });
+
     </script>
 
 </body>
