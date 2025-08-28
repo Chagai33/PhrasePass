@@ -8,8 +8,9 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
+            flex-direction: column; /* Added to stack footer below container */
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             min-height: 100vh;
             padding: 1rem 0;
             margin: 0;
@@ -117,6 +118,17 @@
         #historyList li:hover {
             background-color: #e8f0fe;
         }
+        
+        /* --- קוד חדש לעיצוב החלק התחתון --- */
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #888;
+        }
+        .footer p {
+            margin: 0.2rem 0;
+        }
     </style>
 </head>
 <body>
@@ -138,7 +150,13 @@
         </div>
     </div>
 
+    <div class="footer">
+        <p>Dev: Chagai Yechiel</p>
+        <p>Version 1.0</p>
+    </div>
+
     <script>
+        // (כל קוד ה-JavaScript נשאר זהה לקודם)
         let passwordHistory = [];
         const BLOCKLIST = ['password', '123456', 'qwerty', 'iloveyou', 'mynameis', 'sunshine', 'israel', 'football'];
         const PADDING_CHARS = 'abcdefghkmnpqrstuvwxyz23456789';
@@ -176,23 +194,19 @@
         }
 
         function isPasswordValid(password, originalBase) {
-            // בדיקה 1: רצפים ארוכים מהמקור
             if (originalBase.length >= 5) {
                 for (let i = 0; i <= originalBase.length - 5; i++) {
                     const substring = originalBase.substring(i, i + 5);
                     if (password.includes(substring)) {
-                        return false; // נכשל
+                        return false;
                     }
                 }
             }
-            
-            // בדיקה 2: רצף של 3 תווים זהים
             const consecutiveRegex = /(.)\1\1/;
             if (consecutiveRegex.test(password)) {
-                return false; // נכשל
+                return false;
             }
-            
-            return true; // כל הבדיקות עברו
+            return true;
         }
 
         function generatePassword() {
@@ -213,7 +227,10 @@
             if (BLOCKLIST.includes(cleanedInput)) {
                 showMessage('שגיאה: משפט זה נפוץ מדי. אנא בחר משפט ייחודי יותר.'); return;
             }
-            // הסרנו את הבדיקה המקורית מכאן, כי היא תתבצע בלולאת היצירה
+            const consecutiveRegexInput = /(.)\1\1/;
+            if (consecutiveRegexInput.test(cleanedInput)) {
+                 showMessage('שגיאה: אין להשתמש ב-3 תווים זהים ברצף (כמו aaa או 111).'); return;
+            }
             
             let baseString = cleanedInput;
             if (baseString.length > 10) {
@@ -255,7 +272,6 @@
                 }
                 candidate = charArray.join('');
                 
-                // *** התיקון המרכזי: בדיקה כפולה על הסיסמה המועמדת ***
                 if (isPasswordValid(candidate, baseString)) {
                     finalPassword = candidate;
                     break;
