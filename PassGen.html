@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhrasePass - Password Generator3333</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem 0;
+            margin: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 2rem 3rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #1a73e8;
+            margin-bottom: 0.5rem;
+        }
+        .instructions {
+            font-size: 0.95rem;
+            color: #555;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            direction: ltr;
+            text-align: left;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: white;
+            background-color: #1a73e8;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #155ab6;
+        }
+        #result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #e8f0fe;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            font-family: "Courier New", Courier, monospace;
+            font-weight: bold;
+            color: #1c1c1c;
+            min-height: 25px;
+            word-wrap: break-word;
+            cursor: pointer;
+            direction: ltr;
+        }
+        #message {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            min-height: 20px;
+            font-weight: bold;
+        }
+        .history-container {
+            margin-top: 2rem;
+            text-align: right;
+            max-height: 160px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 0 1rem;
+        }
+        h2 {
+            font-size: 1.1rem;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        #historyList {
+            list-style-type: decimal;
+            padding-right: 20px;
+            margin: 0;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 1rem;
+            color: #444;
+            text-align: left;
+            direction: ltr;
+        }
+        #historyList li {
+            padding: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>מחולל סיסמאות</h1>
+        <p class="instructions">
+            כדי ליצור סיסמה חזקה, כתבו משפט קצר באנגלית (למשל, <code>my dog name is bonzo</code>). המערכת תהפוך אותו אוטומטית לסיסמה מאובטחת באורך 12 תווים.
+        </p>
+
+        <input type="text" id="userInput" placeholder=" כתבו משפט קצר באנגלית...">
+        <button id="generateBtn" onclick="generatePassword()">צור לי סיסמה!</button>
+        <div id="result" onclick="copyToClipboard()"></div>
+        <div id="message"></div>
+
+        <div class="history-container">
+            <h2>היסטוריה (10 אחרונות)</h2>
+            <ol id="historyList"></ol>
+        </div>
+    </div>
+
+    <script>
+        let passwordHistory = [];
+        const BLOCKLIST = ['password', '123456', 'qwerty', 'iloveyou', 'mynameis', 'sunshine', 'israel', 'football'];
+        const PADDING_CHARS = 'abcdefghkmnpqrstuvwxyz23456789';
+
+        const userInputEl = document.getElementById('userInput');
+        const messageDiv = document.getElementById('message');
+
+        userInputEl.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                document.getElementById('generateBtn').click();
+            }
+        });
+        
+        function showMessage(text, color = '#d93025') { // Default color is red
+            messageDiv.textContent = text;
+            messageDiv.style.color = color;
+        }
+
+        function isValid(password, originalBase) {
+            if (originalBase.length < 5) return true;
+            for (let i = 0; i <= originalBase.length - 5; i++) {
+                const substring = originalBase.substring(i, i + 5);
+                if (password.includes(substring)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function generatePassword() {
+            const userInput = userInputEl.value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.textContent = '';
+            showMessage('', 'black'); // Clear previous message
+
+            const allowedCharsRegex = /^[a-zA-Z0-9!@#$\- ]*$/;
+            if (!allowedCharsRegex.test(userInput)) {
+                showMessage('שגיאה: ניתן להשתמש רק באותיות באנגלית, ספרות וסימנים מורשים.'); return;
+            }
+            const cleanedInput = userInput.replace(/\s+/g, '').toLowerCase();
+            if (!cleanedInput) {
+                showMessage('יש להזין משפט.'); return;
+            }
+            if (BLOCKLIST.includes(cleanedInput)) {
+                showMessage('שגיאה: משפט זה נפוץ מדי. אנא בחר משפט ייחודי יותר.'); return;
+            }
+            const consecutiveRegex = /(.)\1\1/;
+            if (consecutiveRegex.test(cleanedInput)) {
+                showMessage('שגיאה: אין להשתמש ב-3 תווים זהים ברצף (כמו aaa או 111).'); return;
+            }
+
+            let baseString = cleanedInput;
+            if (baseString.length > 10) {
+                baseString = baseString.substring(0, 10);
+            } else if (baseString.length < 10) {
+                const uniqueChars = new Set(baseString).size;
+                const charsToPad = 10 - baseString.length;
+                if (uniqueChars < 4) {
+                    for (let i = 0; i < charsToPad; i++) {
+                        baseString += PADDING_CHARS[Math.floor(Math.random() * PADDING_CHARS.length)];
+                    }
+                } else {
+                    for (let i = 0; i < charsToPad; i++) {
+                        baseString += baseString[Math.floor(Math.random() * baseString.length)];
+                    }
+                }
+            }
+
+            let finalPassword = '';
+            const maxTries = 50;
+            for (let i = 0; i < maxTries; i++) {
+                let candidate = baseString;
+                const allowedSymbols = ['!', '@', '#', '$', '-'];
+                
+                const randomSymbol = allowedSymbols[Math.floor(Math.random() * allowedSymbols.length)];
+                let insertPos = Math.floor(Math.random() * (candidate.length + 1));
+                candidate = candidate.slice(0, insertPos) + randomSymbol + candidate.slice(insertPos);
+
+                const randomDigit = Math.floor(Math.random() * 10).toString();
+                insertPos = Math.floor(Math.random() * (candidate.length + 1));
+                candidate = candidate.slice(0, insertPos) + randomDigit + candidate.slice(insertPos);
+                
+                let charArray = candidate.split('');
+                const letterIndices = [];
+                charArray.forEach((char, index) => { if (/[a-z]/.test(char)) letterIndices.push(index); });
+                if (letterIndices.length > 0) {
+                    const indexToCapitalize = letterIndices[Math.floor(Math.random() * letterIndices.length)];
+                    charArray[indexToCapitalize] = charArray[indexToCapitalize].toUpperCase();
+                }
+                candidate = charArray.join('');
+                
+                if (isValid(candidate, baseString)) {
+                    finalPassword = candidate;
+                    break;
+                }
+            }
+
+            if (!finalPassword) {
+                showMessage('לא ניתן היה ליצור סיסמה ייחודית מהקלט. נסה משפט אחר.'); return;
+            }
+
+            resultDiv.textContent = finalPassword;
+            showMessage('לחץ על הסיסמה כדי להעתיק', '#666');
+            updateHistory(finalPassword);
+        }
+        
+        function updateHistory(newPassword) {
+            passwordHistory.unshift(newPassword);
+            if (passwordHistory.length > 10) passwordHistory.pop();
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            passwordHistory.forEach(password => {
+                const listItem = document.createElement('li');
+                listItem.textContent = password;
+                historyList.appendChild(listItem);
+            });
+        }
+
+        function copyToClipboard() {
+            const password = document.getElementById('result').textContent;
+            if (password) {
+                navigator.clipboard.writeText(password).then(() => {
+                    showMessage('הועתק!', 'green');
+                    setTimeout(() => {
+                        if (document.getElementById('result').textContent) {
+                           showMessage('לחץ על הסיסמה כדי להעתיק', '#666');
+                        }
+                    }, 2000);
+                });
+            }
+        }
+    </script>
+
+</body>
+</html>
