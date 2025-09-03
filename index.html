@@ -38,7 +38,6 @@
             line-height: 1.5;
         }
         
-        /* --- שינוי: הוספת עטיפה לשדה הטקסט --- */
         .input-wrapper {
             position: relative;
             margin-bottom: 1rem;
@@ -47,7 +46,7 @@
         input[type="text"] {
             width: 100%;
             padding: 12px;
-            padding-left: 35px; /* ריווח פנימי לכפתור ה-X */
+            padding-left: 35px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 1rem;
@@ -56,7 +55,6 @@
             text-align: left;
         }
 
-        /* --- שינוי: עיצוב כפתור הניקוי --- */
         .clear-btn {
             position: absolute;
             right: 12px;
@@ -66,7 +64,7 @@
             font-size: 1.6rem;
             font-weight: 300;
             color: #aaa;
-            display: none; /* מוסתר כברירת מחדל */
+            display: none;
             line-height: 1;
         }
         .clear-btn:hover {
@@ -160,7 +158,7 @@
     <div class="container">
         <h1>מחולל סיסמאות</h1>
         <p class="instructions">
-            כדי ליצור סיסמה חזקה, כתבו משפט קצר באנגלית (למשל, <code>my dog name is bonzo</code>). המערכת תהפוך אותו אוטומטית לסיסמה מאובטחת באורך 12 תווים.
+            כדי ליצור סיסמה חזקה, כתבו משפט קצר באנגלית (למשל, <code>my dog name is bonzo</code>). המערכת תהפוך אותו אוטומטית לסיסמה מאובטחת באורך **10** תווים. /* <-- שינוי 1 */
         </p>
 
         <div class="input-wrapper">
@@ -180,7 +178,7 @@
 
     <div class="footer">
         <p>Dev: Chagai Yechiel</p>
-        <p>Version 1.1</p>
+        <p>Version 2.0</p> /* <-- שינוי 2 */
     </div>
 
     <script>
@@ -189,7 +187,7 @@
         const PADDING_CHARS = 'abcdefghkmnpqrstuvwxyz23456789';
         const userInputEl = document.getElementById('userInput');
         const messageDiv = document.getElementById('message');
-        const clearBtn = document.getElementById('clearBtn'); // <-- שינוי: הוספת הפניה לכפתור ה-X
+        const clearBtn = document.getElementById('clearBtn');
 
         userInputEl.addEventListener('keyup', function(event) {
             if (event.key === 'Enter') {
@@ -261,11 +259,13 @@
             }
             
             let baseString = cleanedInput;
-            if (baseString.length > 10) {
-                baseString = baseString.substring(0, 10);
-            } else if (baseString.length < 10) {
+            const BASE_LENGTH = 8; /* <-- שינוי 3 */
+
+            if (baseString.length > BASE_LENGTH) {
+                baseString = baseString.substring(0, BASE_LENGTH);
+            } else if (baseString.length < BASE_LENGTH) {
                 const uniqueChars = new Set(baseString).size;
-                const charsToPad = 10 - baseString.length;
+                const charsToPad = BASE_LENGTH - baseString.length;
                 if (uniqueChars < 4) {
                     for (let i = 0; i < charsToPad; i++) {
                         baseString += PADDING_CHARS[Math.floor(Math.random() * PADDING_CHARS.length)];
@@ -291,6 +291,9 @@
                 insertPos = Math.floor(Math.random() * (candidate.length + 1));
                 candidate = candidate.slice(0, insertPos) + randomDigit + candidate.slice(insertPos);
                 
+                // --- שינוי 4: בדיקה שהסיסמה הסופית היא בדיוק 10 תווים ---
+                if (candidate.length !== 10) continue;
+
                 let charArray = candidate.split('');
                 const letterIndices = [];
                 charArray.forEach((char, index) => { if (/[a-z]/.test(char)) letterIndices.push(index); });
@@ -332,7 +335,6 @@
             });
         }
 
-        /* --- שינוי: הוספת לוגיקה לכפתור הניקוי --- */
         userInputEl.addEventListener('input', function() {
             if (userInputEl.value.length > 0) {
                 clearBtn.style.display = 'block';
@@ -350,7 +352,6 @@
             clearBtn.style.display = 'none';
             userInputEl.focus(); 
         });
-
     </script>
 
 </body>
