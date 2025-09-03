@@ -219,7 +219,19 @@
             copyTextToClipboard(password, 'הועתק!');
         }
 
+        // --- שינוי: הוספת רשת ביטחון לפונקציית הבדיקה ---
         function isPasswordValid(password, originalBase) {
+            const SYMBOL_REGEX = new RegExp(`[${allowedSymbols.map(s => `\\${s}`).join('')}]`);
+            
+            // בדיקה 1: האם הסיסמה עומדת בכללי המדיניות
+            if (password.length !== 10 ||
+                !/[a-z]/.test(password) ||
+                !/[A-Z]/.test(password) ||
+                !SYMBOL_REGEX.test(password)) {
+                return false;
+            }
+
+            // בדיקה 2: רצפים ארוכים מהמקור
             if (originalBase.length >= 5) {
                 for (let i = 0; i <= originalBase.length - 5; i++) {
                     const substring = originalBase.substring(i, i + 5);
@@ -228,12 +240,17 @@
                     }
                 }
             }
+            
+            // בדיקה 3: רצף של 3 תווים זהים
             const consecutiveRegex = /(.)\1\1/;
             if (consecutiveRegex.test(password)) {
                 return false;
             }
-            return true;
+            
+            return true; // כל הבדיקות עברו
         }
+
+        const allowedSymbols = ['!', '@', '#', '$', '-']; // הגדרת המשתנה גלובלית
 
         function generatePassword() {
             const userInput = userInputEl.value;
@@ -278,20 +295,15 @@
             }
 
             let finalPassword = '';
-            const maxTries = 50;
+            const maxTries = 100; // הגדלת מספר הניסיונות למקרה שהבדיקות המחמירות יותר דורשות זאת
             for (let i = 0; i < maxTries; i++) {
                 let candidate = baseString;
-                const allowedSymbols = ['!', '@', '#', '$', '-'];
                 
                 const randomSymbol = allowedSymbols[Math.floor(Math.random() * allowedSymbols.length)];
-                
-                // --- שינוי: הוספת התו המיוחד רק באמצע המחרוזת ---
-                // בוחרים מיקום בין התו השני לתו שלפני האחרון
                 const symbolInsertPos = Math.floor(Math.random() * (candidate.length - 1)) + 1;
                 candidate = candidate.slice(0, symbolInsertPos) + randomSymbol + candidate.slice(symbolInsertPos);
 
                 const randomDigit = Math.floor(Math.random() * 10).toString();
-                // הוספת הספרה נשארת אקראית לחלוטין
                 const digitInsertPos = Math.floor(Math.random() * (candidate.length + 1));
                 candidate = candidate.slice(0, digitInsertPos) + randomDigit + candidate.slice(digitInsertPos);
                 
