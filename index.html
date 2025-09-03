@@ -178,7 +178,7 @@
 
     <div class="footer">
         <p>Dev: Chagai Yechiel</p>
-        <p>Version 2.0</p> /* <-- שינוי 2 */
+        <p>Version 2.0</p> 
     </div>
 
     <script>
@@ -259,7 +259,7 @@
             }
             
             let baseString = cleanedInput;
-            const BASE_LENGTH = 8; /* <-- שינוי 3 */
+            const BASE_LENGTH = 8;
 
             if (baseString.length > BASE_LENGTH) {
                 baseString = baseString.substring(0, BASE_LENGTH);
@@ -284,14 +284,17 @@
                 const allowedSymbols = ['!', '@', '#', '$', '-'];
                 
                 const randomSymbol = allowedSymbols[Math.floor(Math.random() * allowedSymbols.length)];
-                let insertPos = Math.floor(Math.random() * (candidate.length + 1));
-                candidate = candidate.slice(0, insertPos) + randomSymbol + candidate.slice(insertPos);
+                
+                // --- שינוי: הוספת התו המיוחד רק באמצע המחרוזת ---
+                // בוחרים מיקום בין התו השני לתו שלפני האחרון
+                const symbolInsertPos = Math.floor(Math.random() * (candidate.length - 1)) + 1;
+                candidate = candidate.slice(0, symbolInsertPos) + randomSymbol + candidate.slice(symbolInsertPos);
 
                 const randomDigit = Math.floor(Math.random() * 10).toString();
-                insertPos = Math.floor(Math.random() * (candidate.length + 1));
-                candidate = candidate.slice(0, insertPos) + randomDigit + candidate.slice(insertPos);
+                // הוספת הספרה נשארת אקראית לחלוטין
+                const digitInsertPos = Math.floor(Math.random() * (candidate.length + 1));
+                candidate = candidate.slice(0, digitInsertPos) + randomDigit + candidate.slice(digitInsertPos);
                 
-                // --- שינוי 4: בדיקה שהסיסמה הסופית היא בדיוק 10 תווים ---
                 if (candidate.length !== 10) continue;
 
                 let charArray = candidate.split('');
