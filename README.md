@@ -1,86 +1,85 @@
 # 🛡️ PhrasePass - Mnemonic Password Generator
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b4382586-7e30-4e56-9a25-835695843734/deploy-status)](https://app.netlify.com/sites/phrasepass/deploys)
 ![Version](https://img.shields.io/badge/version-2.1-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Language](https://img.shields.io/badge/language-Hebrew-orange)
 
-**PhrasePass** is a client-side web application designed to solve the dilemma of creating complex passwords that are easy to remember. It converts simple, memorable English phrases (mnemonics) into strong, secure, and complex 10-character passwords.
+> **"Security that humans can actually remember."**
 
-The interface is designed in **Hebrew** with a mobile-first approach, ensuring accessibility for RTL users.
+**PhrasePass** is a web-based tool designed to solve a common IT problem: employees need strong passwords, but standard generators produce impossible-to-remember strings (like `Xj9#m2!L`). This leads to people writing passwords on sticky notes, which defeats the purpose.
+
+**PhrasePass** takes a memorable English phrase (mnemonic) and algorithmically converts it into a cryptographically strong, 10-character password that meets strict corporate policy requirements.
+
+---
+
+## 🔗 Live Demo
+🚀 **Try it here:** [https://phrasepass.netlify.app/](https://phrasepass.netlify.app/)
+
+---
+
+## 💡 Why PhrasePass?
+
+I built this tool to assist my department employees. When opening new user accounts, we needed passwords that were:
+1.  **Secure:** Contain Uppercase, Lowercase, Numbers, and Symbols.
+2.  **Compliant:** Meet standard length and complexity policies.
+3.  **Human-Friendly:** Easy for the user to type and remember immediately.
+
+Standard generators prioritize entropy over usability. **PhrasePass balances both.**
 
 ---
 
 ## 🚀 Features
 
-* **Mnemonic Logic:** Transforms phrases like `my dog name is bonzo` into cryptographically strong passwords.
-* **Smart Complexity:** Automatically injects uppercase letters, numbers, and symbols (`!@#$-`) into the base phrase.
-* **Security Validation:**
-    * **Blocklist:** Prevents usage of common weak phrases (e.g., "password", "123456").
-    * **Pattern Detection:** Rejects passwords with repeating characters (e.g., "aaa") or predictable sequences.
-* **Client-Side Only:** All processing happens locally in the browser. No data is ever sent to a server.
-* **Session History:** Keeps track of the last 10 generated passwords for quick retrieval.
-* **User Experience:**
-    * One-click "Copy to Clipboard".
-    * Responsive design (Mobile/Desktop).
-    * Clear history management.
+* **Smart Transformation:** Converts phrases like `my dog name is bonzo` into complex strings.
+* **Policy Compliance:** Guarantees 10 characters, including `[A-Z]`, `[a-z]`, `[0-9]`, and symbols (`!@#$-`).
+* **Security Filters:**
+    * **Blocklist:** Prevents weak phrases (e.g., "password", "123456").
+    * **Anti-Repetition:** Rejects results with triple characters (e.g., "aaa") or predictable sequences.
+* **Privacy First:** Client-side only. No data is sent to any server; everything happens in your browser.
+* **Hebrew UI:** Designed for Israeli users with a clean, Right-to-Left (RTL) interface.
+* **Session History:** Remembers the last 10 generated passwords locally for quick workflow.
 
 ---
 
-## 🛠️ How It Works (The Algorithm)
+## 🛠️ The Logic (How it works)
 
-1.  **Input Sanitization:** The user enters a phrase. Spaces are removed, and text is converted to lowercase.
-2.  **Length Normalization:** The base string is trimmed or padded (using a varied character set) to ensure a consistent base length.
-3.  **Injection:**
-    * A random **symbol** (`!`, `@`, `#`, `$`, `-`) is inserted at a random position.
-    * A random **digit** (0-9) is inserted at a random position.
-    * A random letter is converted to **Uppercase**.
-4.  **Validation Loop:** The generator attempts up to 100 variations until the result passes strict criteria:
-    * Exactly 10 characters long.
-    * Contains [A-Z], [a-z], [0-9], and a symbol.
-    * No triple repetitive characters.
+1.  **Sanitization:** Input is cleaned of spaces and converted to lowercase.
+2.  **Normalization:** The string is padded or trimmed to a base length using a secure character set.
+3.  **Injection:** The algorithm randomly injects:
+    * A symbol (`!`, `@`, `#`, `$`, `-`) at a random position.
+    * A digit (0-9) at a random position.
+    * Uppercase transformation for random letters.
+4.  **Validation Loop:** It attempts up to 100 variations until it finds one that passes all security checks (no triple chars, valid length, includes all types).
 
 ---
 
-## 💻 Installation & Usage
+## 💻 Installation (Local)
 
-Since this is a lightweight, static web application, no build process or package manager is required.
+Since PhrasePass is a static web application, you don't need `npm` or a build server.
 
-### Option 1: Run Locally
 1.  Clone the repository:
     ```bash
-    git clone [https://github.com/your-username/phrase-pass.git](https://github.com/your-username/phrase-pass.git)
+    git clone [https://github.com/Chagai33/PhrasePass.git](https://github.com/Chagai33/PhrasePass.git)
     ```
-2.  Navigate to the project folder.
-3.  Open `index.html` in any modern web browser.
-
-### Option 2: Deploy
-You can deploy this file directly to **GitHub Pages**, **Netlify**, or **Vercel** simply by uploading the `index.html` file.
-
----
-
-## 🎨 Tech Stack
-
-* **HTML5** - Semantic structure.
-* **CSS3** - Flexbox layout, responsive design, and system-ui fonts.
-* **JavaScript (ES6+)** - DOM manipulation and generation logic.
+2.  Navigate to the folder:
+    ```bash
+    cd PhrasePass
+    ```
+3.  Open `index.html` in any web browser.
 
 ---
 
-## 📸 Screenshots
+## 📸 Screenshot
 
-*(Add a screenshot of your app here if possible)*
-
-| Desktop View | Mobile View |
-|:---:|:---:|
-| ![Desktop](https://via.placeholder.com/400x300?text=Desktop+UI) | ![Mobile](https://via.placeholder.com/200x350?text=Mobile+UI) |
+*(Place a screenshot of your app here. Example: `![App Screenshot](./screenshot.png)`)*
 
 ---
 
 ## 👤 Author
 
 **Chagai Yechiel**
-
-* **Version:** 2.1
+* **GitHub:** [@Chagai33](https://github.com/Chagai33)
+* **LinkedIn:** [Chagai Yechiel](https://www.linkedin.com/in/chagai-yechiel/)
 
 ---
 
