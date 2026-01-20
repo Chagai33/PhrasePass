@@ -71,8 +71,7 @@ Since PhrasePass is a static web application, you don't need `npm` or a build se
 
 ## 📸 Screenshot
 
-*(Place a screenshot of your app here. Example: `![App Screenshot](./screenshot.png)`)*
-
+![App Screenshot](./screenshot.png)
 ---
 
 ## 👤 Author
